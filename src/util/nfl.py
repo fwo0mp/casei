@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
-import urllib2
+from urllib.request import urlopen
 
 TEAM_CONVERSIONS = {
     'WSH': 'WAS'
@@ -11,7 +11,7 @@ def extract_team(raw):
 
 def get_schedule_data(week):
     schedule_url = 'http://www.espn.com/nfl/schedule/_/week/{0}'.format(week)
-    return urllib2.urlopen(schedule_url).read()
+    return urlopen(schedule_url).read()
 
     #with open(sys.argv[1], 'r') as html_file:
         #html = html_file.read()
@@ -36,7 +36,7 @@ def get_games(week):
 
 def get_standings_data():
     standings_url = 'http://www.espn.com/nfl/standings'
-    return urllib2.urlopen(standings_url).read()
+    return urlopen(standings_url).read()
 
 def get_standings():
     html = get_standings_data()

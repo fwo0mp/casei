@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import datetime
-import urllib2
 
 TEAM_CONVERSIONS = {
     'L-IL': 'LOY',

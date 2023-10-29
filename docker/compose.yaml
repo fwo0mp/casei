@@ -1,0 +1,56 @@
+services:
+  app:
+    image: "casei:0.0.1"
+    volumes:
+      - uwsgi_data:/tmp/uwsgi/
+      - staticfiles:/casei/static/
+      - staticfiles:/var/www/casei/assets/
+    environment:
+      - CASEI_DB_HOST=database
+      - CASEI_CACHE_ADDR=cache:11211
+      - CASEI_DB_PASSWORD_FILE=/run/secrets/db_password
+      - CASEI_SECRET_KEY_FILE=/run/secrets/app_secret
+      - CASEI_HOSTNAMES=localhost
+    secrets:
+      - db_password
+      - app_secret
+    depends_on:
+      - database
+      - cache
+  nginx:
+    image: "casei-nginx:0.0.1"
+    volumes:
+      - uwsgi_data:/tmp/uwsgi/
+      #- staticfiles:/var/www/casei/assets/:ro
+      - staticfiles:/casei/static/:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+
+  database:
+    image: "postgres:16.0-alpine"
+    restart: always
+    volumes:
+      # XXX use env var for local path
+      - /Users/brendon/volumes/postgres_casei:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    #environment:
+      #- POSTGRES_HOST_AUTH_METHOD=trust
+
+  cache:
+    image: "memcached:1.6-alpine"
+    restart: always
+    ports:
+      - "11211:11211"
+
+volumes:
+  staticfiles:
+  uwsgi_data:
+
+secrets:
+  db_password:
+    file: db_password.txt
+  app_secret:
+    file: app_secret.txt

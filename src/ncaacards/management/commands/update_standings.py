@@ -3,7 +3,7 @@ from django.core.management.base import NoArgsCommand
 import datetime
 import json
 import re
-import urllib2
+from urllib.request import urlopen
 
 
 class Command(NoArgsCommand):
@@ -25,7 +25,7 @@ class Command(NoArgsCommand):
         return Team.objects.get(game_type=self.game_type, abbrev_name=self.team_names.get(team_name, team_name.upper()))
 
     def handle_noargs(self, **options):
-        html = urllib2.urlopen(self.url).read()
+        html = urlopen(self.url).read()
         matches = self.regex.finditer(html)
         for match in matches:
             try:
@@ -41,4 +41,4 @@ class Command(NoArgsCommand):
                     loss_count.count = losses
                     loss_count.save()
             except Exception as err:
-                print 'Error processing team %s: %s' % (match.group('name'), str(err))
+                print('Error processing team %s: %s' % (match.group('name'), str(err)))

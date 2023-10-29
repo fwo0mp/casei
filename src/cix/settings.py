@@ -11,22 +11,29 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+from typing import Optional
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+def get_secret_from_file(env_var: str) -> Optional[str]:
+    path = os.getenv(env_var)
+    if path is None:
+         return None
+    with open(path, "r") as secret_file:
+        return secret_file.read().strip()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'XXX'
+SECRET_KEY = get_secret_from_file("CASEI_SECRET_KEY_FILE")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['caseinsensitive.org']
-
+ALLOWED_HOSTS = list((os.getenv("CASEI_HOSTNAMES") or "localhost").split(","))
 
 APPEND_SLASH=False
 LOGIN_URL='/ncaa/?show_login=1'
@@ -79,7 +86,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cix.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
@@ -88,16 +94,16 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'cix',
         'USER': 'cixuser',
-        'PASSWORD': 'XXX',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'PASSWORD': get_secret_from_file("CASEI_DB_PASSWORD_FILE"),
+        'HOST': os.getenv("CASEI_DB_HOST"),
+        'PORT': '5432',
     }
 }
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': 'localhost:11211',
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+        'LOCATION': os.getenv("CASEI_CACHE_ADDR") or "localhost:11211",
         'TIMEOUT': None
     }
 }
@@ -156,7 +162,7 @@ DEBUG_TOOLBAR_CONFIG = {
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'case.insensitive.trading@gmail.com'
-EMAIL_HOST_PASSWORD = 'XXX'
+EMAIL_HOST_PASSWORD = get_secret_from_file("CASEI_EMAIL_PASSWORD") or ""
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

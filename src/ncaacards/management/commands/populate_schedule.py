@@ -3,7 +3,7 @@ from django.core.management.base import NoArgsCommand
 import datetime
 import json
 import re
-import urllib2
+from urllib.request import urlopen
 
 
 class Command(NoArgsCommand):
@@ -49,7 +49,7 @@ class Command(NoArgsCommand):
         return Team.objects.get(game_type=self.game_type, abbrev_name=self.team_names[team_name])
 
     def handle_noargs(self, **options):
-        for result in json.loads(urllib2.urlopen(self.fanfeedr_url).read()):
+        for result in json.loads(urlopen(self.fanfeedr_url).read()):
             game_desc = self.game_desc_regex.match(result['name']).groupdict()
             try:
                 game_time = datetime.datetime.strptime(result['date'], '%Y-%m-%dT%H:%M:%S.%fZ')
