@@ -1,0 +1,28 @@
+[project]
+name = "casei2"
+version = "0.1.0"
+description = "Fantasy trading game for NCAA and NFL"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=4.2,<5.0",
+    "psycopg2-binary>=2.9",
+    "pymemcache>=4.0",
+    "django-debug-toolbar>=4.2",
+    "beautifulsoup4>=4.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ipython>=8.0",
+]
+scraping = [
+    "selenium>=4.0",
+]
+graphing = [
+    "pygraphviz>=1.11",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ipython>=8.0",
+]

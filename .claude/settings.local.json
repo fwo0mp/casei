@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(git -C /Users/brendon/src/casei2 log --oneline -20)",
+      "Bash(/Users/brendon/src/casei2/.venv/bin/pip list:*)"
+    ]
+  }
+}

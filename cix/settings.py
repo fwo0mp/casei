@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'XXX'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'XXX')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = ['caseinsensitive.org']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'caseinsensitive.org').split(',')
 
 
 APPEND_SLASH=False
@@ -86,18 +86,21 @@ WSGI_APPLICATION = 'cix.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cix',
-        'USER': 'cixuser',
-        'PASSWORD': 'XXX',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'NAME': os.environ.get('DATABASE_NAME', 'cix'),
+        'USER': os.environ.get('DATABASE_USER', 'cixuser'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'XXX'),
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432')
     }
 }
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': 'localhost:11211',
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+        'LOCATION': '{}:{}'.format(
+            os.environ.get('MEMCACHED_HOST', 'localhost'),
+            os.environ.get('MEMCACHED_PORT', '11211')
+        ),
         'TIMEOUT': None
     }
 }

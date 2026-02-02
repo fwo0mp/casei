@@ -109,18 +109,18 @@ class ChangeOrderForm(forms.Form):
 
 
 class CreateGameForm(forms.Form):
-    type_choices = []
-    for gtype in GameType.objects.all():
-        type_choices.append((gtype, gtype))
-
     game_name = forms.CharField(max_length=50)
-    game_type = forms.ChoiceField(type_choices)
+    game_type = forms.ChoiceField(choices=[])
     position_limit = forms.CharField(max_length=10, required=False)
     points_limit = forms.CharField(max_length=10, required=False)
     game_password = forms.CharField(widget=forms.PasswordInput, required=False)
     entry_name = forms.CharField(max_length=30)
     support_cards = forms.BooleanField(required=False)
     support_stocks = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['game_type'].choices = [(gtype.name, gtype.name) for gtype in GameType.objects.all()]
 
     def clean(self):
         super(CreateGameForm, self).clean()

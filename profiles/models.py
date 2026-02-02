@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from cix.fields import UUIDField
 from datetime import datetime
 from django.contrib import admin
@@ -9,12 +7,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     join_date = models.DateTimeField(auto_now_add=True)
     verification_id = UUIDField(auto=True)
     is_verified = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
 
 
