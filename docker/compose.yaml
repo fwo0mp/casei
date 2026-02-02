@@ -1,6 +1,6 @@
 services:
   app:
-    image: "casei:0.0.1"
+    image: "bscheinman/casei:0.0.1"
     volumes:
       - uwsgi_data:/tmp/uwsgi/
       - staticfiles:/casei/static/
@@ -18,7 +18,7 @@ services:
       - database
       - cache
   nginx:
-    image: "casei-nginx:0.0.1"
+    image: "bscheinman/casei-nginx:0.0.1"
     volumes:
       - uwsgi_data:/tmp/uwsgi/
       #- staticfiles:/var/www/casei/assets/:ro
