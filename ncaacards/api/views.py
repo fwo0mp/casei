@@ -101,7 +101,7 @@ def executions(request, entry):
         try:
             since_time = datetime.datetime.strptime(since_str, API_TIME_FORMAT)
         except ValueError:
-            print 'malformatted date string {}'.format(since_str)
+            print('malformatted date string {}'.format(since_str))
             raise ApiException('malformatted date string')
         
         query = query & Q(time__gte=since_time)
@@ -170,7 +170,7 @@ def do_place_order(params, self_entry):
     form = TradeForm(params)
     if not form.is_valid():
         form_errors = []
-        for field, errors in form.errors.iteritems():
+        for field, errors in form.errors.items():
             for error in errors:
                 form_errors.append('{0}: {1}'.format(field, error))
         raise ApiException(form_errors)

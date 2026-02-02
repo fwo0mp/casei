@@ -29,7 +29,7 @@ class Command(BaseCommand):
             edges[edge_key] += trade_coeff * trade_delta
 
         trade_graph = gv.AGraph(strict=True, directed=True)
-        for entries, weight in edges.iteritems():
+        for entries, weight in edges.items():
             if weight > 0:
                 entries = (entries[1], entries[0])
             else:

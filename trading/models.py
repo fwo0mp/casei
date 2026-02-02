@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from cix.fields import UUIDField
 from decimal import Decimal
 from django.contrib import admin
@@ -12,16 +10,16 @@ from django.dispatch import receiver
 
 class Market(models.Model):
     name = models.CharField(max_length=20, unique=True)
-    game = models.ForeignKey('ncaacards.NcaaGame', blank=True, null=True)
+    game = models.ForeignKey('ncaacards.NcaaGame', blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
 
 class Security(models.Model):
-    market = models.ForeignKey(Market, related_name='securities')
+    market = models.ForeignKey(Market, related_name='securities', on_delete=models.CASCADE)
     name = models.CharField(max_length=6)
-    team = models.ForeignKey('ncaacards.GameTeam', blank=True, null=True)
+    team = models.ForeignKey('ncaacards.GameTeam', blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
        unique_together = ('market', 'name')
@@ -30,15 +28,15 @@ class Security(models.Model):
         return self.name
 
     def get_top_bids(self, count=5, entry=None):
-    	bid_query = Q(is_active=True, quantity_remaining__gt=0, is_buy=True)
-    	if entry:
-    		bid_query = bid_query & Q(entry__id=entry.id)
+        bid_query = Q(is_active=True, quantity_remaining__gt=0, is_buy=True)
+        if entry:
+            bid_query = bid_query & Q(entry__id=entry.id)
         return self.orders.filter(bid_query).order_by('-price', 'last_modified')[:count].select_related('entry')
 
     def get_top_asks(self, count=5, entry=None):
-    	ask_query = Q(is_active=True, quantity_remaining__gt=0, is_buy=False)
-    	if entry:
-    		ask_query = ask_query & Q(entry__id=entry.id)
+        ask_query = Q(is_active=True, quantity_remaining__gt=0, is_buy=False)
+        if entry:
+            ask_query = ask_query & Q(entry__id=entry.id)
         return self.orders.filter(ask_query).order_by('price', 'last_modified')[:count].select_related('entry')
 
     def get_bid(self):
@@ -143,8 +141,8 @@ class OpenOrderManager(models.Manager):
 class Order(models.Model):
     order_id = UUIDField(auto=True, primary_key=True)
     placer = models.CharField(max_length=30) # This should be populated by the using application and is just for that application's use
-    entry = models.ForeignKey('ncaacards.UserEntry', blank=True, null=True)
-    security = models.ForeignKey(Security, related_name='orders')
+    entry = models.ForeignKey('ncaacards.UserEntry', blank=True, null=True, on_delete=models.CASCADE)
+    security = models.ForeignKey(Security, related_name='orders', on_delete=models.CASCADE)
     placed_time = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now_add=True)
     quantity = models.IntegerField()
@@ -165,10 +163,10 @@ class Order(models.Model):
 
 
 class Execution(models.Model):
-    security = models.ForeignKey(Security, related_name='executions', editable=False)
+    security = models.ForeignKey(Security, related_name='executions', editable=False, on_delete=models.CASCADE)
     execution_id = UUIDField(auto=True, primary_key=True, editable=False)
-    buy_order = models.ForeignKey(Order, related_name='buy_executions', editable=False)
-    sell_order = models.ForeignKey(Order, related_name='sell_executions', editable=False)
+    buy_order = models.ForeignKey(Order, related_name='buy_executions', editable=False, on_delete=models.CASCADE)
+    sell_order = models.ForeignKey(Order, related_name='sell_executions', editable=False, on_delete=models.CASCADE)
     quantity = models.IntegerField(editable=False)
     price = models.DecimalField(decimal_places=2, max_digits=10, editable=False)
     time = models.DateTimeField(auto_now_add=True, editable=False)
