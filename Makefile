@@ -12,6 +12,12 @@ help:
 	@echo "  make makemigrations   - Create new migrations"
 	@echo "  make createsuperuser  - Create admin user"
 	@echo ""
+	@echo "Local Setup:"
+	@echo "  make setup-local-data       - Populate DB with test data"
+	@echo "  make setup-local-data-reset - Reset and repopulate test data"
+	@echo "  make docker-setup-local-data       - Populate DB (Docker)"
+	@echo "  make docker-setup-local-data-reset - Reset and repopulate (Docker)"
+	@echo ""
 	@echo "Docker Commands:"
 	@echo "  make docker-up        - Start all services"
 	@echo "  make docker-down      - Stop all services"
@@ -86,6 +92,22 @@ docker-migrate:
 
 docker-createsuperuser:
 	docker compose exec web uv run python manage.py createsuperuser
+
+# =============================================================================
+# Local Setup
+# =============================================================================
+
+setup-local-data:
+	uv run python manage.py setup_local_data
+
+setup-local-data-reset:
+	uv run python manage.py setup_local_data --reset
+
+docker-setup-local-data:
+	docker compose exec web uv run python manage.py setup_local_data
+
+docker-setup-local-data-reset:
+	docker compose exec web uv run python manage.py setup_local_data --reset
 
 # =============================================================================
 # Data Import/Update Commands

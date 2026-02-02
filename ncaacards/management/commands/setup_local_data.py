@@ -275,24 +275,26 @@ class Command(BaseCommand):
                 ask_price = base_price + spread / 2
 
                 # Create bid order
+                qty_bid = random.randint(5, 20)
                 Order.orders.create(
                     placer=entry.entry_name,
                     entry=entry,
                     security=security,
-                    quantity=random.randint(5, 20),
-                    quantity_remaining=random.randint(5, 20),
+                    quantity=qty_bid,
+                    quantity_remaining=qty_bid,
                     price=bid_price.quantize(Decimal("0.01")),
                     is_buy=True,
                     is_active=True,
                 )
 
                 # Create ask order
+                qty_ask = random.randint(5, 20)
                 Order.orders.create(
                     placer=entry.entry_name,
                     entry=entry,
                     security=security,
-                    quantity=random.randint(5, 20),
-                    quantity_remaining=random.randint(5, 20),
+                    quantity=qty_ask,
+                    quantity_remaining=qty_ask,
                     price=ask_price.quantize(Decimal("0.01")),
                     is_buy=False,
                     is_active=True,
