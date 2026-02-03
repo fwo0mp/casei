@@ -43,7 +43,7 @@
 	            <th width='25'>Ask Size</th>
 	        </tr></thead>
 	        {% for team, security, position, user_bid, user_ask in rows %}
-                <tr bgcolor='{{ team.team|upcoming_color }}'>
+                <tr class='{{ team.team|upcoming_class }}'>
 	        		<td>{% team_link team.team.abbrev_name game 'stock_tab' %}</td>
 	        		<td>{{ security.get_last }}</td>
 	        		<td>{{ team.volume }}</td>

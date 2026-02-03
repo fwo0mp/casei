@@ -144,22 +144,23 @@ def execution_table(executions, game, self_entry):
 def order_format(order, self_entry, value):
     return { 'is_self_order': (order.entry == self_entry), 'value':value }
 
-UPCOMING_THRESHOLD = datetime.timedelta(days=1)
-BASE_FACTOR = 0.25
 @register.filter
-def upcoming_color(team):
+def upcoming_class(team):
+    """Return a CSS class based on how soon the team's next game is."""
     next_game = team.get_next_game()
     if next_game is None:
-        color_scale = 1.0
-    else:
-        time_until = next_game.game_time - timezone.now()
-        if time_until >= UPCOMING_THRESHOLD:
-            color_scale = 1.0
-        elif time_until <= datetime.timedelta(0):
-            color_scale = 0.0
-        else:
-            color_scale = float(time_until.total_seconds()) / UPCOMING_THRESHOLD.total_seconds()
-            color_scale = 1.0 - (1.0 - color_scale) ** 2.5
+        return 'upcoming-normal'
 
-    gb_value = min(256 * (BASE_FACTOR + color_scale * (1.0 - BASE_FACTOR)), 255)
-    return '#FF{0}{0}'.format(hex(int(gb_value))[2:].zfill(2).upper())
+    time_until = next_game.game_time - timezone.now()
+    hours_until = time_until.total_seconds() / 3600
+
+    if hours_until <= 0:
+        return 'upcoming-live'
+    elif hours_until <= 4:
+        return 'upcoming-imminent'
+    elif hours_until <= 12:
+        return 'upcoming-very-soon'
+    elif hours_until <= 24:
+        return 'upcoming-soon'
+    else:
+        return 'upcoming-normal'
