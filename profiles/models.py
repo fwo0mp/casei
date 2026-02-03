@@ -11,6 +11,7 @@ class UserProfile(models.Model):
     join_date = models.DateTimeField(auto_now_add=True)
     verification_id = UUIDField(auto=True)
     is_verified = models.BooleanField(default=False)
+    dark_mode = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
