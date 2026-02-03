@@ -13,6 +13,7 @@ urlpatterns = [
     re_path(r'^do_signup/$', views.do_signup),
     re_path(r'^signup_thanks/$', views.signup_thanks),
     re_path(r'^do_logout/$', views.do_logout),
+    re_path(r'^toggle_dark_mode/$', views.toggle_dark_mode),
     re_path(r'^verify/([a-zA-Z0-9]+)/$', views.verify),
     re_path(r'^ncaa/', include('ncaacards.urls')),
     re_path(r'^password_reset/$', auth_views.PasswordResetView.as_view(

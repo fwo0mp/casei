@@ -3,8 +3,9 @@ from cix.logic import send_verification_email
 from profiles.models import UserProfile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group, User
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 from django.template import RequestContext
 
 
@@ -96,3 +97,15 @@ def verify(request, verify_id):
             profile.is_verified = True
             profile.save()
     return render_with_request_context(request, 'verify.html', { 'error':error, 'username':profile.user.username })
+
+
+@require_POST
+def toggle_dark_mode(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+
+    profile = request.user.userprofile
+    profile.dark_mode = not profile.dark_mode
+    profile.save()
+
+    return JsonResponse({'dark_mode': profile.dark_mode})

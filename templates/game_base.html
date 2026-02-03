@@ -4,6 +4,7 @@
 
 {% block scripts %}
 <link href='/static/bootstrap/css/bootstrap.min.css' rel='stylesheet'>
+<link href='/static/css/dark-mode.css' rel='stylesheet'>
 <style type='text/css'>
     body {
         padding-top: 60px;
@@ -28,6 +29,9 @@
             </ul>
             <p class='navbar-text pull-right'>
                 {% if user.is_authenticated %}
+                    <button class='dark-mode-toggle' onclick='toggleDarkMode()' title='Toggle dark mode'>
+                        <span id='dark-mode-icon'>{% if dark_mode %}☀{% else %}🌙{% endif %}</span>
+                    </button>
                     Logged in as {{ user.username }} <a href='/do_logout/'>Logout</a>
                 {% else %}
                     <a data-toggle='modal' href='#loginModal' id='login_expander' class='btn btn-primary'>Login</a>
@@ -129,6 +133,26 @@
             $('#login_expander').click();
         });
     {% endif %}
+
+    function toggleDarkMode() {
+        $.ajax({
+            url: '/toggle_dark_mode/',
+            type: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            success: function(data) {
+                if (data.dark_mode) {
+                    $('body').addClass('dark-mode');
+                    $('#dark-mode-icon').text('☀');
+                } else {
+                    $('body').removeClass('dark-mode');
+                    $('#dark-mode-icon').text('🌙');
+                }
+            },
+            error: function(xhr) {
+                console.error('Failed to toggle dark mode:', xhr.responseText);
+            }
+        });
+    }
 </script>
 {% block game_scripts %}{% endblock game_scripts %}
 {% endblock body %}
